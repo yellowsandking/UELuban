@@ -8,7 +8,7 @@ dotnet %LUBAN_DLL% ^
     -c cpp-sharedptr-bin ^
     -d bin  ^
     --conf %CONF_ROOT%\luban.conf ^
-    -x outputCodeDir=UELuban\Source\UELuban\LubanGen ^
+    -x outputCodeDir=..\UELuban\Source\UELuban\LubanGen ^
     -x outputDataDir=..\UELuban\Content\Luban\ConfigBytes ^
     -x pathValidator.rootDir=%WORKSPACE%\UELuban\Content\Luban 
 
