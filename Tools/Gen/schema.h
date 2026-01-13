@@ -64,6 +64,7 @@ namespace test {
 
 
  struct AutoImport1; 
+namespace Global { struct tPreLoadRes; }
 namespace test { struct Shape; }
 namespace test { struct Circle; }
 namespace test2 { struct Rectangle; }
@@ -110,6 +111,28 @@ struct AutoImport1 : public luban::CfgBean
 };
 
 
+
+namespace Global {
+
+struct tPreLoadRes : public luban::CfgBean 
+{
+    static bool deserializetPreLoadRes(::luban::ByteBuf& _buf, ::luban::SharedPtr<tPreLoadRes>& _out);
+
+    virtual ~tPreLoadRes() {}
+
+    bool deserialize(::luban::ByteBuf& _buf);
+
+    ::luban::int32 id;
+    ::luban::String ResName;
+    ::luban::String FileType;
+    ::luban::int32 CreatAmount;
+
+    static constexpr int __ID__ = -1631144032;
+
+    int getTypeId() const override { return __ID__; }
+};
+
+}
 
 namespace test {
 
@@ -313,6 +336,49 @@ struct vec4 : public luban::CfgBean
 
 
 
+namespace Global {
+
+
+class TbPreLoadRes
+{
+    private:
+    ::luban::HashMap<::luban::int32, ::luban::SharedPtr<Global::tPreLoadRes>> _dataMap;
+    ::luban::Vector<::luban::SharedPtr<Global::tPreLoadRes>> _dataList;
+    
+    public:
+    bool load(::luban::ByteBuf& _buf)
+    {        
+        int n;
+        if (!_buf.readSize(n)) return false;
+        for(; n > 0 ; --n)
+        {
+            ::luban::SharedPtr<Global::tPreLoadRes> _v;
+            if(!Global::tPreLoadRes::deserializetPreLoadRes(_buf, _v)) return false;
+            _dataList.push_back(_v);
+            _dataMap[_v->id] = _v;
+        }
+        return true;
+    }
+
+    const ::luban::HashMap<::luban::int32, ::luban::SharedPtr<Global::tPreLoadRes>>& getDataMap() const { return _dataMap; }
+    const ::luban::Vector<::luban::SharedPtr<Global::tPreLoadRes>>& getDataList() const { return _dataList; }
+
+    Global::tPreLoadRes* getRaw(::luban::int32 key)
+    { 
+        auto it = _dataMap.find(key);
+        return it != _dataMap.end() ? it->second.get() : nullptr;
+    }
+
+    ::luban::SharedPtr<Global::tPreLoadRes> get(::luban::int32 key)
+    { 
+        auto it = _dataMap.find(key);
+        return it != _dataMap.end() ? it->second : nullptr;
+    }
+
+};
+
+}
+
 
 
 
@@ -359,11 +425,15 @@ class TbAutoImport1
 class Tables
 {
     public:
+     Global::TbPreLoadRes TbPreLoadRes;
      TbAutoImport1 TbAutoImport1;
 
     bool load(::luban::Loader<::luban::ByteBuf> loader)
     {
         ::luban::ByteBuf buf;
+        buf.clear();
+        if (!loader(buf, "global_tbpreloadres")) return false;
+        if (!TbPreLoadRes.load(buf)) return false;
         buf.clear();
         if (!loader(buf, "tbautoimport1")) return false;
         if (!TbAutoImport1.load(buf)) return false;

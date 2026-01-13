@@ -48,6 +48,32 @@ bool AutoImport1::deserializeAutoImport1(::luban::ByteBuf& _buf, ::luban::Shared
 }
 
 
+bool Global::tPreLoadRes::deserialize(::luban::ByteBuf& _buf)
+{
+
+    if(!_buf.readInt(id)) return false;
+    if(!_buf.readString(ResName)) return false;
+    if(!_buf.readString(FileType)) return false;
+    if(!_buf.readInt(CreatAmount)) return false;
+
+    return true;
+}
+
+bool Global::tPreLoadRes::deserializetPreLoadRes(::luban::ByteBuf& _buf, ::luban::SharedPtr<Global::tPreLoadRes>& _out)
+{
+    _out.reset(LUBAN_NEW(Global::tPreLoadRes));
+    if (_out->deserialize(_buf))
+    {
+        return true;
+    }
+    else
+    { 
+        _out.reset();
+        return false;
+    }
+}
+
+
 bool test::Shape::deserialize(::luban::ByteBuf& _buf)
 {
 
