@@ -1,6 +1,6 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
-#include "Tests/LubanConfigTest.h"
+#include "LubanConfigTest.h"
 #include "schema.h"
 #include "ByteBuf.h"
 #include "HAL/PlatformFilemanager.h"
